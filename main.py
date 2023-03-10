@@ -2,18 +2,19 @@ import gspread
 from random import choice
 import os
 
-
 credentials = {
-    "type": os.environ.get("type"),
-    "project_id": os.environ.get("project_id"),
-    "private_key_id": os.environ.get("private_key_id"),
-    "private_key": os.environ.get("private_key"),
-    "client_email": os.environ.get("client_email"),
-    "auth_uri": os.environ.get("auth_uri"),
-    "token_uri": os.environ.get("token_uri"),
-    "auth_provider_x509_cert_url": os.environ.get("auth_provider_x509_cert_url"),
-    "client_x509_cert_url": os.environ.get("client_x509_cert_url")
+    "type": os.environ["type"],
+    "project_id": os.environ["project_id"],
+    "private_key_id": os.environ["private_key_id"],
+    "private_key": os.environ["private_key"],
+    "client_email": os.environ["client_email"],
+    "auth_uri": os.environ["auth_uri"],
+    "token_uri": os.environ["token_uri"],
+    "auth_provider_x509_cert_url": os.environ["auth_provider_x509_cert_url"],
+    "client_x509_cert_url": os.environ["client_x509_cert_url"]
 }
+
+credentials["private_key"] = credentials["private_key"].replace("\\n", "\n")
 
 gc = gspread.service_account_from_dict(credentials)
 sh = gc.open("team_picker")
