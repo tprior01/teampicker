@@ -94,7 +94,3 @@ def count_combos(teams, bit, pool, prev_teams):
                         if pool[i] in team and pool[j] in team:
                             count += 1 + k / 10
     return count
-
-
-if __name__ == '__main__':
-    main()
