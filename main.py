@@ -24,7 +24,7 @@ sh = gc.open("team_picker")
 
 
 @app.route("/")
-def main():
+def index():
     """Picks the fairest two teams possible and writes them to the sheet"""
     try:
         # this length determines how many weeks of football have already been played
@@ -64,10 +64,11 @@ def main():
         team1 = [[pool[i]] for i, bit in enumerate(teams) if bit == "0"]
         team2 = [[pool[i]] for i, bit in enumerate(teams) if bit == "1"]
         output = team1 + [[""]] * int((12 % n) / 2) + team2 + [[""]] * int((12 % n) / 2) if n != 12 else team1 + team2
-        print(output)
         sh.sheet1.update(f"{cap(l, 3)}14:{cap(l, 3)}25", output if n != 12 else team1 + team2)
+        return output
     except Exception as e:
         print(e)
+        return ""
 
 
 def cap(l, n):
