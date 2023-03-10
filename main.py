@@ -1,8 +1,21 @@
 import gspread
-from numpy import array
 from random import choice
+import os
 
-gc = gspread.service_account()
+
+credentials = {
+    "type": os.getenv("service_account"),
+    "project_id": os.getenv("project_id"),
+    "private_key_id": os.getenv("private_key_id"),
+    "private_key": os.getenv("private_key"),
+    "client_email": os.getenv("client_email"),
+    "auth_uri": os.getenv("auth_uri"),
+    "token_uri": os.getenv("token_uri"),
+    "auth_provider_x509_cert_url": os.getenv("auth_provider_x509_cert_url"),
+    "client_x509_cert_url": os.getenv("client_x509_cert_url")
+}
+
+gc = gspread.service_account_from_dict(credentials)
 sh = gc.open("team_picker")
 
 
@@ -10,17 +23,17 @@ def pick_teams():
     """Picks the fairest two teams possible and writes them to the sheet"""
     try:
         # this length determines how many weeks of football have already been played
-        l = len(sh.get_worksheet(0).get('C26:Z26')[0])
+        l = len(sh.sheet1.get('C26:Z26')[0])
 
         # creates a dictionary of every player and their latest score
         scores = {players[0]: players[-1] for players in sh.get_worksheet(1).get(f"A2:Z100")}
 
         # creates a list of all previous team combinations
-        prev_teams = array(sh.get_worksheet(0).get(f"C14:{letter(l, 2)}25"))
-        prev_teams = [set(prev_teams[0+j:6+j, i]) for j in range(0, 7, 6) for i in range(len(prev_teams[0]))]
+        prev_teams = [{player[0] for player in sh.sheet1.get(f"{cap(i, 2)}{14 + j}:{cap(i, 2)}{19 + j}")
+                       if player != []} for i in range(1, l + 1) for j in range(0, 7, 6)]
 
         # creates the pool of players and another list of their respective scores
-        pool = [player[-1] for player in sh.get_worksheet(0).get(f"{letter(l, 3)}2:{chr(ord('@')+(l + 3))}13")]
+        pool = [player[-1] for player in sh.sheet1.get(f"{cap(l, 3)}2:{chr(ord('@') + (l + 3))}13")]
         pool_scores = [float(scores[player[-1]]) for player in sh.get_worksheet(0).get('C2:Z13')]
 
         # the number of players must be a multiple of 2
@@ -46,14 +59,12 @@ def pick_teams():
         team1 = [[pool[i]] for i, bit in enumerate(teams) if bit == "0"]
         team2 = [[pool[i]] for i, bit in enumerate(teams) if bit == "1"]
         output = team1 + [[""]] * int((12 % n) / 2) + team2 + [[""]] * int((12 % n) / 2) if n != 12 else team1 + team2
-        sh.get_worksheet(0).update(f"{letter(l, 3)}14:{letter(l, 3)}25", output if n != 12 else team1 + team2)
+        sh.sheet1.update(f"{cap(l, 3)}14:{cap(l, 3)}25", output if n != 12 else team1 + team2)
     except Exception as e:
         print(e)
 
 
-
-
-def letter(l, n):
+def cap(l, n):
     """Returns the capital of the lth + nth letter in the alphabet"""
     return chr(ord('@')+(l + n))
 
