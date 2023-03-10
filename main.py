@@ -93,7 +93,3 @@ def count_combos(teams, bit, pool, prev_teams):
 
 def main():
     pick_teams()
-
-
-if __name__ == '__main__':
-    main()
