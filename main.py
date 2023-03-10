@@ -4,7 +4,7 @@ import os
 
 
 credentials = {
-    "type": os.getenv("service_account"),
+    "type": os.getenv("type"),
     "project_id": os.getenv("project_id"),
     "private_key_id": os.getenv("private_key_id"),
     "private_key": os.getenv("private_key"),
