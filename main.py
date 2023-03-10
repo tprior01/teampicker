@@ -1,6 +1,9 @@
 import gspread
 from random import choice
 import os
+import flask
+
+app = flask.Flask(__name__)
 
 credentials = {
     "type": os.environ["type"],
@@ -20,7 +23,8 @@ gc = gspread.service_account_from_dict(credentials)
 sh = gc.open("team_picker")
 
 
-def pick_teams():
+@app.route("/")
+def main():
     """Picks the fairest two teams possible and writes them to the sheet"""
     try:
         # this length determines how many weeks of football have already been played
@@ -90,10 +94,6 @@ def count_combos(teams, bit, pool, prev_teams):
                         if pool[i] in team and pool[j] in team:
                             count += 1 + k / 10
     return count
-
-
-def main():
-    pick_teams()
 
 
 if __name__ == '__main__':
