@@ -65,6 +65,8 @@ def index():
         team2 = [[pool[i]] for i, bit in enumerate(teams) if bit == "1"]
         output = team1 + [[""]] * int((12 % n) / 2) + team2 + [[""]] * int((12 % n) / 2) if n != 12 else team1 + team2
         sh.sheet1.update(f"{cap(l, 3)}14:{cap(l, 3)}25", output if n != 12 else team1 + team2)
+        sh.sheet1.update(f"{cap(l, 3)}53", len(parsed))
+
         return ""
     except Exception as e:
         print(e)
